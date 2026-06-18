@@ -137,6 +137,23 @@ export default function SchedulePage() {
                     <div className="flex items-center gap-3">
                       {job.price && <span className="font-medium text-gray-900">{formatCurrency(job.price)}</span>}
                       <Badge variant={STATUS_STYLES[job.status] || "default"}>{job.status.replace("_", " ")}</Badge>
+                      {job.status === "scheduled" && (
+                        <button
+                          onClick={async () => {
+                            if (confirm("Cancel this booking?")) {
+                              await fetch(`/api/jobs/${job.id}`, {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "cancelled" }),
+                              });
+                              fetchData();
+                            }
+                          }}
+                          className="text-sm text-red-600 hover:text-red-800 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
