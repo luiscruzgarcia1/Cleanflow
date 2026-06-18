@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",
+    "@neondatabase/serverless": "^1.1.0",
     "@prisma/adapter-libsql": "^7.8.0",
+    "@prisma/adapter-neon": "^7.8.0",
     "@prisma/client": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^11.0.0",
@@ -26,6 +28,7 @@
     "recharts": "^2.15.0",
     "stripe": "^17.0.0",
     "tailwind-merge": "^2.6.0",
+    "ws": "^8.21.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {
