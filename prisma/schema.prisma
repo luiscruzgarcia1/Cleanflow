@@ -16,7 +16,7 @@ model User {
   phone         String?
   stripeCustomerId String?
   subscriptionId String?
-  subscriptionTier String? @default("free") // free, starter, pro, enterprise
+  subscriptionTier String? @default("free")
   trialEndsAt   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -39,7 +39,7 @@ model Customer {
   state       String?
   zipCode     String?
   notes       String?
-  source      String?  // referral, website, phone, etc.
+  source      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -54,8 +54,8 @@ model Employee {
   name        String
   email       String?
   phone       String?
-  role        String?  // cleaner, supervisor, etc.
-  color       String?  // for calendar display
+  role        String?
+  color       String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -71,19 +71,19 @@ model Job {
   employeeId      String?
   title           String
   description     String?
-  status          String    @default("scheduled") // scheduled, in_progress, completed, cancelled
-  jobType         String    @default("standard") // standard, deep, move_out, post_construction
+  status          String    @default("scheduled")
+  jobType         String    @default("standard")
   scheduledDate   DateTime?
   startTime       String?
   endTime         String?
-  duration        Int?      // minutes
+  duration        Int?
   squareFootage   Int?
   bedrooms        Int?
   bathrooms       Int?
   price           Float?
   isRecurring     Boolean   @default(false)
-  recurringType   String?   // weekly, biweekly, monthly
-  recurringDay    String?   // monday, tuesday, etc.
+  recurringType   String?
+  recurringDay    String?
   notes           String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -103,12 +103,12 @@ model Invoice {
   amount          Float
   tax             Float?    @default(0)
   total           Float
-  status          String    @default("pending") // pending, sent, paid, overdue, cancelled
+  status          String    @default("pending")
   dueDate         DateTime?
   paidAt          DateTime?
   stripePaymentIntentId String?
   notes           String?
-  lineItems       String?   // JSON string of line items
+  lineItems       String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
