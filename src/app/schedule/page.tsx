@@ -35,6 +35,7 @@ export default function SchedulePage() {
     employeeId: "", jobType: "standard", price: "",
     isRecurring: false, recurringType: "weekly",
   });
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -59,6 +60,7 @@ export default function SchedulePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError("");
     try {
       const res = await fetch("/api/jobs", {
         method: "POST",
@@ -67,11 +69,16 @@ export default function SchedulePage() {
       });
       if (res.ok) {
         setIsModalOpen(false);
+        setSubmitError("");
         setFormData({ customerId: "", title: "", scheduledDate: "", startTime: "", employeeId: "", jobType: "standard", price: "", isRecurring: false, recurringType: "weekly" });
         fetchData();
+      } else {
+        const err = await res.json();
+        setSubmitError(err.error || "Failed to create booking");
       }
     } catch (e) {
       console.error(e);
+      setSubmitError("Network error — please try again");
     }
   };
 
@@ -166,6 +173,11 @@ export default function SchedulePage() {
       {/* New Booking Dialog */}
       <Dialog isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="New Booking">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {submitError && (
+            <div className="bg-red-50 text-red-700 px-4 py-2.5 rounded-lg text-sm border border-red-200">
+              {submitError}
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-sm font-medium">Customer *</label>
             <select
