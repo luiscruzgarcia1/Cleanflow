@@ -191,10 +191,7 @@ export default function CustomersPage() {
                 <TableBody>
                   {filteredCustomers.map((customer) => (
                     <TableRow key={customer.id}>
-                      <TableCell
-                        className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
-                        onClick={() => openEditModal(customer)}
-                      >
+                      <TableCell className="font-medium">
                         {customer.name}
                       </TableCell>
                       <TableCell>
