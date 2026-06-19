@@ -16,6 +16,9 @@ export default function HomePage() {
               <span className="text-xl font-bold text-gray-900">CleanFlow</span>
             </div>
             <div className="flex items-center gap-4">
+              <Link href="/book" className="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                Book a Cleaning
+              </Link>
               <Link href="/login" className="text-gray-600 hover:text-gray-900 font-medium">
                 Log in
               </Link>
