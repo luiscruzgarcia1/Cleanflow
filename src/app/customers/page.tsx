@@ -53,10 +53,17 @@ export default function CustomersPage() {
 
   // Close dropdown when clicking outside
   useEffect(() => {
+    if (!openMenuId) return;
     const handleClick = () => setOpenMenuId(null);
-    document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
-  }, []);
+    // Delay to avoid the same click that opened the menu
+    const timer = setTimeout(() => {
+      document.addEventListener("click", handleClick);
+    }, 10);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("click", handleClick);
+    };
+  }, [openMenuId]);
 
   const fetchCustomers = async () => {
     try {
@@ -236,8 +243,7 @@ export default function CustomersPage() {
                         {openMenuId === customer.id && (
                           <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-40 py-1">
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              onClick={() => {
                                 openEditModal(customer);
                               }}
                               className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
@@ -245,8 +251,7 @@ export default function CustomersPage() {
                               <Pencil size={14} /> Edit
                             </button>
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              onClick={() => {
                                 deleteCustomer(customer.id);
                               }}
                               className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left"
