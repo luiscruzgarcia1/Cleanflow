@@ -132,6 +132,7 @@ export default function DashboardPage() {
           icon={DollarSign}
           trend="+12.5%"
           color="blue"
+          href="/invoices"
         />
         <StatCard
           label="Active Customers"
@@ -140,6 +141,7 @@ export default function DashboardPage() {
           icon={Users}
           trend="+4"
           color="green"
+          href="/customers"
         />
         <StatCard
           label="Upcoming Jobs"
@@ -147,6 +149,7 @@ export default function DashboardPage() {
           description="Next 7 days"
           icon={CalendarDays}
           color="amber"
+          href="/schedule"
         />
         <StatCard
           label="Pending Invoices"
@@ -155,6 +158,7 @@ export default function DashboardPage() {
           icon={Receipt}
           trend="-2.4%"
           color="red"
+          href="/invoices"
         />
       </div>
 
@@ -318,6 +322,7 @@ function StatCard({
   icon: Icon,
   trend,
   color,
+  href,
 }: {
   label: string;
   value: string | number;
@@ -325,6 +330,7 @@ function StatCard({
   icon: any;
   trend?: string;
   color: "blue" | "green" | "amber" | "red";
+  href?: string;
 }) {
   const bgColors = {
     blue: "bg-blue-50 text-blue-600",
@@ -333,8 +339,8 @@ function StatCard({
     red: "bg-red-50 text-red-600",
   };
 
-  return (
-    <Card className="overflow-hidden border-gray-200 shadow-sm transition-hover hover:shadow-md">
+  const card = (
+    <Card className="overflow-hidden border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-blue-200 cursor-pointer">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
@@ -361,6 +367,11 @@ function StatCard({
       </CardContent>
     </Card>
   );
+
+  if (href) {
+    return <Link href={href}>{card}</Link>;
+  }
+  return card;
 }
 
 function ActionLink({ icon: Icon, label, href }: { icon: any, label: string, href: string }) {
