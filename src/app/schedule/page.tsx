@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, CalendarDays, Clock, User, MapPin } from "lucide-react";
+import { Plus, CalendarDays, Clock, User, MapPin, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
@@ -36,6 +36,7 @@ export default function SchedulePage() {
     isRecurring: false, recurringType: "weekly",
   });
   const [submitError, setSubmitError] = useState("");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -91,9 +92,22 @@ export default function SchedulePage() {
           <h1 className="text-2xl font-bold text-gray-900">Schedule</h1>
           <p className="text-gray-500">Manage appointments and recurring bookings.</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> New Booking
-        </Button>
+        <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                navigator.clipboard.writeText(`${window.location.origin}/book`);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+            >
+              {copied ? <Check className="mr-2 h-4 w-4 text-green-600" /> : <Copy className="mr-2 h-4 w-4" />}
+              {copied ? "Copied!" : "Copy Booking Link"}
+            </Button>
+            <Button onClick={() => setIsModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" /> New Booking
+            </Button>
+          </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">

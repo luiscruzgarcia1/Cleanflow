@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Download, Filter } from "lucide-react";
+import { Plus, Download, Send, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -156,11 +156,32 @@ export default function InvoicesPage() {
                         </Badge>
                       </td>
                       <td className="p-4 text-right">
-                        {inv.status !== "paid" && (
-                          <Button size="sm" variant="outline" onClick={() => markAsPaid(inv.id)}>
-                            Mark Paid
-                          </Button>
-                        )}
+                        <div className="flex items-center justify-end gap-2">
+                          {inv.status !== "paid" && (
+                            <>
+                              <Button size="sm" variant="outline" onClick={() => markAsPaid(inv.id)}>
+                                Mark Paid
+                              </Button>
+                              <Button 
+                                size="sm"
+                                onClick={async () => {
+                                  const res = await fetch("/api/invoices/pay", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ invoiceId: inv.id }),
+                                  });
+                                  if (res.ok) {
+                                    const data = await res.json();
+                                    if (data.url) window.open(data.url, "_blank");
+                                    if (data.paid) fetchData();
+                                  }
+                                }}
+                              >
+                                <ExternalLink className="mr-1 h-3 w-3" /> Pay Now
+                              </Button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

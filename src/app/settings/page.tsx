@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { SUBSCRIPTION_PLANS } from "@/lib/types";
-import { Save, Upload, Palette, Globe, Clock, MapPin, Link2 } from "lucide-react";
+import { Save, Upload, Palette, Globe, Clock, MapPin, Link2, ExternalLink, Copy } from "lucide-react";
 
 export default function SettingsPage() {
   const [business, setBusiness] = useState({
@@ -288,20 +289,69 @@ export default function SettingsPage() {
               </div>
             </div>
             <div className="grid sm:grid-cols-3 gap-4 mt-4">
-              {SUBSCRIPTION_PLANS.map((plan) => (
-                <div key={plan.id} className={`border rounded-lg p-4 ${subscription.tier === plan.id ? "border-blue-600 ring-2 ring-blue-600" : "border-gray-200"}`}>
-                  <h3 className="font-semibold text-gray-900">{plan.name}</h3>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">${plan.price}<span className="text-sm font-normal text-gray-500">/mo</span></p>
-                  <p className="text-sm text-gray-500 mt-1">Up to {plan.maxEmployees} employees</p>
-                  <ul className="mt-3 space-y-1">
-                    {plan.features.map((f) => (
-                      <li key={f} className="text-xs text-gray-600">✓ {f}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              {SUBSCRIPTION_PLANS.map((plan) => {
+                const isCurrentPlan = subscription.tier === plan.id;
+                const isUpgrade = plan.id === "pro" && subscription.tier === "starter" ||
+                                  plan.id === "enterprise" && ["starter", "pro"].includes(subscription.tier);
+                return (
+                  <div key={plan.id} className={`border rounded-lg p-4 ${isCurrentPlan ? "border-blue-600 ring-2 ring-blue-600" : "border-gray-200"}`}>
+                    <h3 className="font-semibold text-gray-900">{plan.name}</h3>
+                    <p className="text-2xl font-bold text-gray-900 mt-2">${plan.price}<span className="text-sm font-normal text-gray-500">/mo</span></p>
+                    <p className="text-sm text-gray-500 mt-1">Up to {plan.maxEmployees} employees</p>
+                    <ul className="mt-3 space-y-1 mb-4">
+                      {plan.features.map((f) => (
+                        <li key={f} className="text-xs text-gray-600">✓ {f}</li>
+                      ))}
+                    </ul>
+                    {isCurrentPlan ? (
+                      <Badge className="w-full justify-center py-1.5">Current Plan</Badge>
+                    ) : (
+                      <Button 
+                        size="sm" 
+                        className="w-full"
+                        variant={isUpgrade ? "primary" : "outline"}
+                        onClick={async () => {
+                          const priceIds: Record<string, string> = {
+                            starter: "price_starter", pro: "price_pro", enterprise: "price_enterprise",
+                          };
+                          const res = await fetch("/api/stripe/checkout", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ priceId: priceIds[plan.id] }),
+                          });
+                          if (res.ok) {
+                            const data = await res.json();
+                            if (data.demo) window.location.href = data.url;
+                            else if (data.url) window.open(data.url, "_blank");
+                          }
+                        }}
+                      >
+                        {isUpgrade ? "Upgrade" : "Switch to"} {plan.name}
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <p className="text-sm text-gray-500 mt-4">Connect Stripe on the Finance tab to process subscriptions and payments.</p>
+            <div className="mt-6 flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <p className="text-sm font-medium text-gray-900">Stripe Customer Portal</p>
+                <p className="text-xs text-gray-500">Manage billing, invoices, and payment methods</p>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={async () => {
+                  const res = await fetch("/api/stripe/portal", { method: "POST" });
+                  if (res.ok) {
+                    const data = await res.json();
+                    if (data.url) window.open(data.url, "_blank");
+                  }
+                }}
+              >
+                <ExternalLink className="mr-1 h-3 w-3" /> Open Portal
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
