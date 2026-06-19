@@ -124,7 +124,13 @@ model BusinessSetting {
   businessAddress String?
   businessPhone   String?
   businessEmail   String?
+  businessWebsite String?
   logoUrl         String?
+  brandColor      String?  @default("#2563EB")
+  serviceAreas    String?
+  businessHours   String?
+  socialLinks     String?
+  invoiceBranding String?
   defaultHourlyRate Float? @default(50)
   defaultPerSqftRate Float? @default(0.15)
   baseRate        Float?   @default(80)

@@ -56,6 +56,7 @@ export default function DashboardPage() {
   });
   const [upcomingJobs, setUpcomingJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [businessName, setBusinessName] = useState("");
 
   // Mock revenue data for the chart
   const revenueData = [
@@ -76,6 +77,11 @@ export default function DashboardPage() {
   useEffect(() => {
     if (status === "authenticated") {
       fetchDashboardData();
+      // Load business branding
+      fetch("/api/settings")
+        .then(res => res.ok ? res.json() : null)
+        .then(data => { if (data?.businessName) setBusinessName(data.businessName); })
+        .catch(() => {});
     }
   }, [status]);
 
@@ -111,7 +117,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
           <p className="text-gray-500 mt-1">
-            Welcome back, <span className="font-semibold text-gray-900">{session?.user?.name || "User"}</span>. Here's what's happening with your business today.
+            Welcome back to <span className="font-semibold text-gray-900">{businessName || session?.user?.name || "User"}</span>. Here's what's happening with your business today.
           </p>
         </div>
         <div className="flex items-center gap-3">

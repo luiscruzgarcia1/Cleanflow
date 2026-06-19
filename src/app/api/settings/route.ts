@@ -21,6 +21,13 @@ export async function GET() {
     trialEndsAt: user.trialEndsAt,
     ...(s ? {
       businessAddress: s.businessAddress,
+      businessWebsite: s.businessWebsite,
+      logoUrl: s.logoUrl,
+      brandColor: s.brandColor,
+      serviceAreas: s.serviceAreas,
+      businessHours: s.businessHours,
+      socialLinks: s.socialLinks,
+      invoiceBranding: s.invoiceBranding,
       baseRate: s.baseRate,
       defaultPerSqftRate: s.defaultPerSqftRate,
       deepCleanMultiplier: s.deepCleanMultiplier,
@@ -56,7 +63,9 @@ export async function PUT(req: NextRequest) {
 
   const settingsData: any = {};
   const settingFields = [
-    "businessAddress", "baseRate", "defaultPerSqftRate",
+    "businessAddress", "businessWebsite", "logoUrl", "brandColor",
+    "serviceAreas", "businessHours", "socialLinks", "invoiceBranding",
+    "baseRate", "defaultPerSqftRate", "bedroomRate", "bathroomRate",
     "deepCleanMultiplier", "moveOutMultiplier", "postConstructionMultiplier",
     "smsReminders", "emailReminders",
   ];
