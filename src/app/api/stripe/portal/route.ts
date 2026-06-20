@@ -28,12 +28,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No Stripe customer found" }, { status: 400 });
     }
 
-    const session = await stripe.billingPortal.sessions.create({
+    const portalSession = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
       return_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://cleanflow-neon.vercel.app"}/settings`,
     });
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: portalSession.url });
   } catch (error: any) {
     console.error("Portal error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
