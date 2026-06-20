@@ -317,13 +317,15 @@ export default function SettingsPage() {
                             body: JSON.stringify({
                               tier: plan.id,
                               successUrl: window.location.origin + "/settings?success=true",
-                              cancelUrl: window.location.origin + "/settings?cancelled=true",
+                              cancelUrl: window.location.origin + "/settings",
                             }),
                           });
                           if (res.ok) {
                             const data = await res.json();
-                            if (data.demo) window.location.href = data.url;
-                            else if (data.url) window.open(data.url, "_blank");
+                            if (data.url) window.location.href = data.url;
+                          } else {
+                            const err = await res.json();
+                            alert(err.error || "Something went wrong");
                           }
                         }}
                       >
