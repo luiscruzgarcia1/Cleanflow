@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.cleanflow.cloud";
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
@@ -24,14 +26,13 @@ export async function POST(req: NextRequest) {
 
     if (!invoice) return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
 
-    // Demo mode — simulate payment
     if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === "sk_test_placeholder") {
       await prisma.invoice.update({
         where: { id: invoiceId },
         data: { status: "paid", paidAt: new Date() },
       });
       return NextResponse.json({
-        url: `${process.env.NEXT_PUBLIC_APP_URL || "https://cleanflow-neon.vercel.app"}/invoices`,
+        url: `${APP_URL}/invoices`,
         demo: true,
         paid: true,
       });
@@ -54,8 +55,8 @@ export async function POST(req: NextRequest) {
         },
         quantity: 1,
       }],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://cleanflow-neon.vercel.app"}/invoices?paid=${invoiceId}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://cleanflow-neon.vercel.app"}/invoices?cancelled=${invoiceId}`,
+      success_url: `${APP_URL}/invoices?paid=${invoiceId}`,
+      cancel_url: `${APP_URL}/invoices?cancelled=${invoiceId}`,
       metadata: { invoiceId, userId: user.id },
     });
 

@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 
-// Stripe price IDs — once connected, replace with real IDs from Stripe
+// Stripe price IDs loaded from environment variables
 const PRICE_IDS: Record<string, string> = {
-  starter: "price_starter",
-  pro: "price_pro",
-  enterprise: "price_enterprise",
+  starter: process.env.STRIPE_STARTER_PRICE_ID || "price_starter",
+  pro: process.env.STRIPE_PRO_PRICE_ID || "price_pro",
+  enterprise: process.env.STRIPE_ENTERPRISE_PRICE_ID || "price_enterprise",
 };
 
 export async function POST(req: NextRequest) {
