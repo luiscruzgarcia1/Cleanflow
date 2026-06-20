@@ -311,14 +311,11 @@ export default function SettingsPage() {
                         className="w-full"
                         variant={isUpgrade ? "primary" : "outline"}
                         onClick={async () => {
-                          const priceIds: Record<string, string> = {
-                            starter: "starter", pro: "pro", enterprise: "enterprise",
-                          };
                           const res = await fetch("/api/stripe/checkout", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                              priceId: priceIds[plan.id],
+                              tier: plan.id,
                               successUrl: window.location.origin + "/settings?success=true",
                               cancelUrl: window.location.origin + "/settings?cancelled=true",
                             }),

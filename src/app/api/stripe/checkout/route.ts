@@ -19,11 +19,13 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    const { priceId, successUrl, cancelUrl } = await req.json();
+    const { tier, successUrl, cancelUrl } = await req.json();
 
-    if (!priceId) {
-      return NextResponse.json({ error: "Price ID is required" }, { status: 400 });
+    if (!tier || !PRICE_IDS[tier]) {
+      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
+
+    const priceId = PRICE_IDS[tier];
 
     // Check if Stripe is connected
     if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === "sk_test_placeholder") {
