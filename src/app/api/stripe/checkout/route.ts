@@ -9,6 +9,8 @@ const PRICE_IDS: Record<string, string> = {
   enterprise: process.env.STRIPE_ENTERPRISE_PRICE_ID || "price_enterprise",
 };
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.cleanflow.cloud";
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
@@ -36,7 +38,7 @@ export async function POST(req: NextRequest) {
         data: { subscriptionTier: tier },
       });
       return NextResponse.json({
-        url: `${process.env.NEXT_PUBLIC_APP_URL || "https://cleanflow-neon.vercel.app"}/settings?upgraded=${tier}`,
+        url: `${APP_URL}/settings?upgraded=${tier}`,
         demo: true,
       });
     }
@@ -64,8 +66,8 @@ export async function POST(req: NextRequest) {
       customer: stripeCustomerId,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: successUrl || `${process.env.NEXT_PUBLIC_APP_URL || "https://cleanflow-neon.vercel.app"}/settings?success=true`,
-      cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL || "https://cleanflow-neon.vercel.app"}/settings?cancelled=true`,
+      success_url: successUrl || `${APP_URL}/settings?success=true`,
+      cancel_url: cancelUrl || `${APP_URL}/settings?cancelled=true`,
       metadata: { userId: user.id },
     });
 
