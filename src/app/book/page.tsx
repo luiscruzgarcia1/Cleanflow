@@ -28,6 +28,7 @@ export default function BookingPage() {
   });
   const [quote, setQuote] = useState<any>(null);
   const [bookingComplete, setBookingComplete] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -73,8 +74,39 @@ export default function BookingPage() {
   };
 
   const handleSubmit = async () => {
-    // In production this would send to the business owner
-    setBookingComplete(true);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/public/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          cleaningType: formData.cleaningType,
+          squareFootage: formData.squareFootage,
+          bedrooms: formData.bedrooms,
+          bathrooms: formData.bathrooms,
+          frequency: formData.frequency,
+          addOns: formData.addOns,
+          scheduledDate: formData.scheduledDate,
+          startTime: formData.startTime,
+          notes: formData.notes,
+        }),
+      });
+      if (res.ok) {
+        setBookingComplete(true);
+      } else {
+        const err = await res.json();
+        alert(err.error || "Booking failed. Please try again.");
+        setSubmitting(false);
+      }
+    } catch (e) {
+      alert("Network error. Please try again.");
+      setSubmitting(false);
+    }
   };
 
   if (bookingComplete) {
