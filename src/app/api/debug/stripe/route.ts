@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const stripeSecretSet = process.env.STRIPE_SECRET_KEY ? 
-    (process.env.STRIPE_SECRET_KEY.startsWith("sk_live") ? "✅ Live key set" : "⚠️ Key found but doesn't start with sk_live") 
+    `✅ Set (starts with: ${process.env.STRIPE_SECRET_KEY.substring(0, 7)}...)` 
     : "❌ Not set";
   
   const stripePubSet = process.env.STRIPE_PUBLISHABLE_KEY ?
