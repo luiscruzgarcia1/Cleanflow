@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { generateQuote } from "@/lib/ai";
+import { sendEmail } from "@/lib/email";
+import { bookingConfirmation, newBookingNotification } from "@/lib/email-templates";
 
 export async function POST(req: NextRequest) {
   try {
@@ -83,8 +85,46 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Send notification to business owner (in-app notification)
-    console.log(`New booking from ${name} for ${scheduledDate}`);
+    // Send confirmation email to customer
+    const cleanTypeLabel = (cleaningType || "standard").replace("_", " ");
+    const formattedDate = new Date(scheduledDate).toLocaleDateString("en-US", {
+      weekday: "long", month: "long", day: "numeric", year: "numeric",
+    });
+
+    await sendEmail({
+      to: email,
+      subject: "Booking Confirmed!",
+      html: bookingConfirmation({
+        customerName: name,
+        businessName: user.businessName || undefined,
+        serviceType: cleanTypeLabel,
+        date: formattedDate,
+        time: startTime || "To be confirmed",
+        address: `${address || ""}${city ? `, ${city}` : ""}`,
+        total: quote.total,
+        notes: notes || undefined,
+      }),
+    });
+
+    // Notify business owner
+    await sendEmail({
+      to: user.email,
+      subject: `New Booking from ${name}`,
+      html: newBookingNotification({
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone || undefined,
+        businessName: user.businessName || undefined,
+        serviceType: cleanTypeLabel,
+        date: formattedDate,
+        time: startTime || "To be confirmed",
+        address: `${address || ""}${city ? `, ${city}` : ""}`,
+        total: quote.total,
+      }),
+    });
+
+    // Log the email (simple logging)
+    console.log(`Emails sent: confirmation to ${email}, notification to ${user.email}`);
 
     return NextResponse.json({
       success: true,
