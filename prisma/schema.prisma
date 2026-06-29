@@ -117,6 +117,24 @@ model Invoice {
   job             Job?      @relation(fields: [jobId], references: [id])
 }
 
+model EmailLog {
+  id            String   @id @default(cuid())
+  userId        String
+  recipient     String
+  subject       String
+  template      String?
+  status        String   @default("sent") // sent, failed, bounced
+  provider      String?
+  messageId     String?
+  errorMessage  String?
+  sentAt        DateTime @default(now())
+
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([recipient])
+}
+
 model BusinessSetting {
   id              String   @id @default(cuid())
   userId          String   @unique
